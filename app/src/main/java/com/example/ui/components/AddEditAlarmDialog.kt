@@ -55,6 +55,7 @@ fun AddEditAlarmDialog(
     var difficulty by remember { mutableStateOf(initial.missionDifficulty) }
     var ringtoneName by remember { mutableStateOf(initial.ringtoneName) }
     var wakeUpCheck by remember { mutableStateOf(initial.isWakeUpCheckEnabled) }
+    var volumeButtonLock by remember { mutableStateOf(initial.isVolumeButtonLockEnabled) }
     var repeatDays by remember { mutableStateOf(initial.repeatDays) }
 
     val allRingtones = remember { AlarmySoundCatalog.getAlarmRingtones() }
@@ -393,6 +394,53 @@ fun AddEditAlarmDialog(
                             )
                         }
                     }
+
+                    // Volume Button Lock Toggle
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = AlarmyCard),
+                        shape = RoundedCornerShape(18.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.Default.Lock,
+                                        contentDescription = null,
+                                        tint = AlarmyRed,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "Volume Button Lock",
+                                        style = MaterialTheme.typography.titleSmall.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        )
+                                    )
+                                }
+                                Text(
+                                    text = "Volume keys do nothing while ringing - only the mission stops it",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = AlarmyTextSecondary
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Switch(
+                                checked = volumeButtonLock,
+                                onCheckedChange = { volumeButtonLock = it },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = Color.White,
+                                    checkedTrackColor = AlarmyRed
+                                )
+                            )
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -419,6 +467,7 @@ fun AddEditAlarmDialog(
                                 missionDifficulty = difficulty,
                                 ringtoneName = ringtoneName,
                                 isWakeUpCheckEnabled = wakeUpCheck,
+                                isVolumeButtonLockEnabled = volumeButtonLock,
                                 repeatDays = repeatDays.ifBlank { "Everyday" }
                             )
                             onSave(updated)

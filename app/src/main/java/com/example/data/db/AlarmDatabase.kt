@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.data.model.AlarmItem
 import com.example.data.model.MissionDifficulty
@@ -13,7 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [AlarmItem::class], version = 1, exportSchema = false)
+@Database(entities = [AlarmItem::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AlarmDatabase : RoomDatabase() {
 
@@ -22,6 +23,21 @@ abstract class AlarmDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: AlarmDatabase? = null
+
+        /**
+         * Adds the anti-snooze guards. Done as a real migration rather than a destructive
+         * one so nobody loses the alarms they already rely on.
+         */
+        val MIGRATION_1_2: Migration = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE alarms ADD COLUMN isVolumeButtonLockEnabled INTEGER NOT NULL DEFAULT 1"
+                )
+                db.execSQL(
+                    "ALTER TABLE alarms ADD COLUMN isEscapeBlockEnabled INTEGER NOT NULL DEFAULT 1"
+                )
+            }
+        }
 
         fun getDatabase(context: Context): AlarmDatabase {
             return INSTANCE ?: synchronized(this) {
@@ -40,6 +56,7 @@ abstract class AlarmDatabase : RoomDatabase() {
                             }
                         }
                     })
+                    .addMigrations(MIGRATION_1_2)
                     .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance

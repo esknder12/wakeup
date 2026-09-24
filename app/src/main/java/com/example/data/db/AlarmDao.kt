@@ -24,6 +24,13 @@ interface AlarmDao {
     @Query("UPDATE alarms SET isEnabled = :enabled WHERE id = :id")
     suspend fun updateAlarmEnabled(id: Int, enabled: Boolean)
 
+    @Query("SELECT * FROM alarms WHERE isEnabled = 1 ORDER BY hour ASC, minute ASC")
+    suspend fun getEnabledAlarms(): List<AlarmItem>
+
+    /** Turns the "volume keys do nothing while ringing" guard on or off for one alarm. */
+    @Query("UPDATE alarms SET isVolumeButtonLockEnabled = :locked WHERE id = :id")
+    suspend fun updateVolumeButtonLock(id: Int, locked: Boolean)
+
     @Query("SELECT COUNT(*) FROM alarms")
     suspend fun getAlarmCount(): Int
 }

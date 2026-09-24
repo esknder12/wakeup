@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.AlarmItem
 import com.example.data.model.MissionType
+import com.example.ui.components.KeepAlarmVolumeLocked
 import com.example.ui.theme.*
 import kotlinx.coroutines.delay
 import kotlin.random.Random
@@ -36,6 +38,17 @@ fun AlarmMissionScreen(
     var isMissionCompleted by remember { mutableStateOf(false) }
     var showWakeUpCheck by remember { mutableStateOf(false) }
     var wakeUpCountdown by remember { mutableStateOf(98) }
+
+    // ── Anti-snooze guards ──────────────────────────────────────────────────────────
+    // Pins the alarm stream at this alarm's volume for as long as the mission is on
+    // screen, so Volume Down (or the shade slider, or anything else) cannot quiet it.
+    // Released automatically when the screen leaves the composition.
+    KeepAlarmVolumeLocked(
+        active = alarm.isVolumeButtonLockEnabled,
+        volumePercent = alarm.soundVolume
+    )
+    // Back key and back gesture are dead ends until the mission is finished.
+    BackHandler(enabled = alarm.isEscapeBlockEnabled) { /* no escape: solve the mission */ }
 
     val infiniteTransition = rememberInfiniteTransition()
     val pulseScale by infiniteTransition.animateFloat(
@@ -92,6 +105,36 @@ fun AlarmMissionScreen(
                     letterSpacing = 1.5.sp
                 )
             )
+        }
+
+        if (alarm.isVolumeButtonLockEnabled) {
+            Spacer(modifier = Modifier.height(10.dp))
+            Surface(
+                color = AlarmyRed.copy(alpha = 0.15f),
+                shape = RoundedCornerShape(20.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, AlarmyRed.copy(alpha = 0.45f))
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = null,
+                        tint = AlarmyRed,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "VOLUME KEYS LOCKED",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 0.8.sp
+                        ),
+                        color = AlarmyRed
+                    )
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(8.dp))

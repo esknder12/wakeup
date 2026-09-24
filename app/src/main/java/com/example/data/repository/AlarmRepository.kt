@@ -27,4 +27,13 @@ class AlarmRepository(private val alarmDao: AlarmDao) {
     suspend fun toggleAlarmEnabled(id: Int, enabled: Boolean) {
         alarmDao.updateAlarmEnabled(id, enabled)
     }
+
+    suspend fun getEnabledAlarms(): List<AlarmItem> {
+        return alarmDao.getEnabledAlarms()
+    }
+
+    /** Turns the "volume keys do nothing while ringing" guard on or off for one alarm. */
+    suspend fun setVolumeButtonLock(id: Int, locked: Boolean) {
+        alarmDao.updateVolumeButtonLock(id, locked)
+    }
 }

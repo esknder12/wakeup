@@ -18,7 +18,14 @@ data class AlarmItem(
     val ringtoneName: String = "End of the World Siren",
     val isWakeUpCheckEnabled: Boolean = true,
     val wakeUpCheckMinutes: Int = 5,
-    val soundVolume: Float = 1.0f
+    val soundVolume: Float = 1.0f,
+    /**
+     * Holds the alarm stream at [soundVolume] and makes the hardware volume keys inert while
+     * this alarm rings, so it cannot be silenced without completing the mission.
+     */
+    val isVolumeButtonLockEnabled: Boolean = true,
+    /** Blocks back / recents escapes from the ringing screen until the mission is solved. */
+    val isEscapeBlockEnabled: Boolean = true
 ) {
     fun getFormattedTime(): String {
         val displayHour = when {
