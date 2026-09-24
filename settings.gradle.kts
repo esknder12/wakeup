@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Alarmy"
+rootProject.name = "Niqu"
 
 include(":app")

@@ -1,5 +1,5 @@
 {
-  "name": "Alarmy - Mission Alarm Clock",
+  "name": "Niqu ንቁ - Mission Alarm Clock",
   "description": "Secret alarm clock for heavy sleepers and students with Math, Shake, Memory, and Quote missions, loud alarms, sleep sounds, and study routines.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

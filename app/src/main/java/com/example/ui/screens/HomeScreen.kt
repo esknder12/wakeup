@@ -113,7 +113,7 @@ fun HomeScreen(
                 }
             }
 
-            // Hero Banner: "No Misses, No Snooze, No Oversleep. Alarmy Prevails."
+            // Hero Banner: "No Misses, No Snooze, No Oversleep. Niqu ንቁ Prevails."
             item {
                 Spacer(modifier = Modifier.height(14.dp))
                 Card(
@@ -162,7 +162,7 @@ fun HomeScreen(
                                 )
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
-                                    text = "Alarmy Prevails with Math & Shake missions.",
+                                    text = "Niqu ንቁ Prevails with Math & Shake missions.",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = AlarmyTextSecondary
                                 )
