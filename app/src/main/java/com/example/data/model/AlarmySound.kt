@@ -16,7 +16,7 @@ data class AlarmySound(
     val duration: String = "Loop",
     val isLoud: Boolean = false,
     val isPremium: Boolean = false,
-    val synthType: SoundSynthType = SoundSynthType.SIREN,
+    val synthType: SoundSynthType = SoundSynthType.SIREN_END_OF_WORLD,
     val ttsPrompt: String? = null
 )
 
