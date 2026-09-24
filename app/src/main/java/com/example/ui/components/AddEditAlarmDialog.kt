@@ -194,17 +194,18 @@ fun AddEditAlarmDialog(
                                 daysOfWeek.forEach { day ->
                                     val isSelected = currentDays.contains(day)
                                     Surface(
-                                        modifier = Modifier.clickable {
-                                            val newList = if (isSelected) {
-                                                currentDays - day
-                                            } else {
-                                                currentDays + day
-                                            }
-                                            repeatDays = newList.filter { it.isNotEmpty() }.joinToString(",")
-                                        },
+                                        modifier = Modifier
+                                            .size(38.dp)
+                                            .clickable {
+                                                val newList = if (isSelected) {
+                                                    currentDays - day
+                                                } else {
+                                                    currentDays + day
+                                                }
+                                                repeatDays = newList.filter { it.isNotEmpty() }.joinToString(",")
+                                            },
                                         shape = CircleShape,
-                                        color = if (isSelected) AlarmyRed else AlarmySurface,
-                                        modifier = Modifier.size(38.dp)
+                                        color = if (isSelected) AlarmyRed else AlarmySurface
                                     ) {
                                         Box(contentAlignment = Alignment.Center) {
                                             Text(

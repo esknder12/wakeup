@@ -69,7 +69,9 @@ jobs:
         id: build
         run: |
           set -o pipefail
-          gradle :app:assembleDebug --stacktrace 2>&1 | tee build.log
+          gradle :app:assembleDebug \
+            -Pkotlin.compiler.execution.strategy=daemon \
+            --stacktrace 2>&1 | tee build.log
 
       # GitHub's raw logs need a browser to read. This puts the actual errors
       # somewhere you (and the agent) can read them straight away.
@@ -139,7 +141,7 @@ jobs:
       # Runs after the APK is safely uploaded, so a failing test never costs you the build.
       - name: Unit tests (non-blocking)
         continue-on-error: true
-        run: gradle :app:testDebugUnitTest --stacktrace
+        run: gradle :app:testDebugUnitTest -Pkotlin.compiler.execution.strategy=daemon --stacktrace
 
       - name: Upload test reports
         if: always()
