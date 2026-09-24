@@ -66,7 +66,39 @@ jobs:
           gradle-version: '9.7.1'
 
       - name: Build the debug APK
-        run: gradle :app:assembleDebug --stacktrace
+        id: build
+        run: |
+          set -o pipefail
+          gradle :app:assembleDebug --stacktrace 2>&1 | tee build.log
+
+      # GitHub's raw logs need a browser to read. This puts the actual errors
+      # somewhere you (and the agent) can read them straight away.
+      - name: Report what went wrong
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "### Build failed - run #${{ github.run_number }}"
+            echo
+            echo "Kotlin / resource errors:"
+            echo '```'
+            grep -E "^(e:|error:|ERROR:)" build.log | head -60 || echo "(none reported)"
+            echo '```'
+            echo
+            echo "Gradle said:"
+            echo '```'
+            sed -n '/What went wrong/,/^\* Try/p' build.log | head -40
+            echo '```'
+            echo
+            echo "Last 40 lines:"
+            echo '```'
+            tail -40 build.log
+            echo '```'
+          } > report.md
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+          gh api "repos/${{ github.repository }}/commits/${GITHUB_SHA}/comments" \
+            -f body="$(cat report.md)" > /dev/null || true
 
       - name: Name the APK something recognisable
         run: |
