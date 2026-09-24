@@ -195,7 +195,7 @@ fun OnboardingWizardScreen(
             shape = RoundedCornerShape(16.dp)
         ) {
             Text(
-                text = if (wizardStep == 0) "Next" else if (wizardStep == 1) "Get started" else if (wizardStep < 5) "Next" else "Save & Launch Niqu ንቁ",
+                text = if (wizardStep == 0) "Next" else if (wizardStep == 1) "Get started" else if (wizardStep < 5) "Next" else "Save & Launch NEQU",
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
                     color = Color.White

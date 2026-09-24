@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tiny static server for the Niqu ንቁ volume-lock preview.
+"""Tiny static server for the NEQU volume-lock preview.
 
 Serves the repository root (so the preview can reuse the app's real drawables)
 and sends "/" straight to the preview page.
@@ -43,5 +43,5 @@ class Server(socketserver.ThreadingTCPServer):
 
 if __name__ == "__main__":
     with Server(("0.0.0.0", PORT), Handler) as httpd:
-        print(f"Niqu preview serving {ROOT} on http://0.0.0.0:{PORT}", flush=True)
+        print(f"NEQU preview serving {ROOT} on http://0.0.0.0:{PORT}", flush=True)
         httpd.serve_forever()

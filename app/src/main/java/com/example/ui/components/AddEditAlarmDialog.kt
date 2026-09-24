@@ -85,7 +85,7 @@ fun AddEditAlarmDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = if (alarm == null) "New Niqu ንቁ Mission" else "Edit Alarm",
+                        text = if (alarm == null) "New NEQU Mission" else "Edit Alarm",
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
                             color = Color.White

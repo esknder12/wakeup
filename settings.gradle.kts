@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Niqu"
+rootProject.name = "NEQU"
 
 include(":app")

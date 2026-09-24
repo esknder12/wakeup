@@ -106,13 +106,13 @@ jobs:
         run: |
           mkdir -p dist
           cp app/build/outputs/apk/debug/app-debug.apk \
-             "dist/niqu-debug-${{ github.run_number }}.apk"
+             "dist/nequ-debug-${{ github.run_number }}.apk"
           ls -lh dist
 
       - name: Upload the APK as a build artifact
         uses: actions/upload-artifact@v5
         with:
-          name: niqu-debug-apk
+          name: nequ-debug-apk
           path: dist/*.apk
           if-no-files-found: error
           retention-days: 30
@@ -123,7 +123,7 @@ jobs:
         run: |
           TAG="apk-v${{ github.run_number }}"
           cat > notes.md <<'EOF'
-          **Niqu ንቁ — debug build**
+          **NEQU — debug build**
 
           Tap the `.apk` file below on your phone to install it.
           Android will ask you to allow *Install unknown apps* for your browser the first time.
@@ -134,7 +134,7 @@ jobs:
           echo "" >> notes.md
           echo "Branch \`${{ github.ref_name }}\` · commit \`${GITHUB_SHA:0:7}\`" >> notes.md
           gh release create "$TAG" dist/*.apk \
-            --title "Niqu ንቁ debug APK #${{ github.run_number }}" \
+            --title "NEQU debug APK #${{ github.run_number }}" \
             --notes-file notes.md \
             --target "$GITHUB_SHA"
 

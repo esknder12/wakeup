@@ -69,7 +69,7 @@ fun TopperRoutineScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = "Master Your Morning Routine with Niqu ንቁ",
+                        text = "Master Your Morning Routine with NEQU",
                         style = MaterialTheme.typography.headlineSmall.copy(
                             fontWeight = FontWeight.ExtraBold,
                             color = Color.White
@@ -79,7 +79,7 @@ fun TopperRoutineScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "Preparing for JEE, NEET, UPSC, or SSC? Niqu ንቁ helps thousands of students build consistency by making sure you never miss your first hour of learning.",
+                        text = "Preparing for JEE, NEET, UPSC, or SSC? NEQU helps thousands of students build consistency by making sure you never miss your first hour of learning.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = AlarmyTextSecondary
                     )

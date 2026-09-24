@@ -50,7 +50,7 @@ import com.example.ui.theme.MyApplicationTheme
 import com.example.ui.viewmodel.AlarmViewModel
 import com.example.util.AlarmLockState
 
-private const val PREFS = "niqu_prefs"
+private const val PREFS = "nequ_prefs"
 private const val KEY_ONBOARDED = "onboarding_complete"
 
 class MainActivity : ComponentActivity() {
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
 
     setContent {
       MyApplicationTheme {
-        NiquApp(
+        NEQUApp(
           viewModel = viewModel,
           startWithOnboarding = !prefs.getBoolean(KEY_ONBOARDED, false),
           onOnboardingComplete = { prefs.edit().putBoolean(KEY_ONBOARDED, true).apply() },
@@ -86,7 +86,7 @@ class MainActivity : ComponentActivity() {
   }
 }
 
-private enum class NiquTab(val label: String, val icon: ImageVector) {
+private enum class NEQUTab(val label: String, val icon: ImageVector) {
   ALARMS("Alarms", Icons.Default.Alarm),
   SOUNDS("Sounds", Icons.Default.MusicNote),
   SLEEP("Sleep", Icons.Default.Bedtime),
@@ -94,7 +94,7 @@ private enum class NiquTab(val label: String, val icon: ImageVector) {
 }
 
 @Composable
-fun NiquApp(
+fun NEQUApp(
   viewModel: AlarmViewModel,
   startWithOnboarding: Boolean,
   onOnboardingComplete: () -> Unit,
@@ -127,7 +127,7 @@ fun NiquApp(
   var showEditor by rememberSaveable { mutableStateOf(false) }
   var editingAlarm by remember { mutableStateOf<AlarmItem?>(null) }
 
-  val tabs = NiquTab.values()
+  val tabs = NEQUTab.values()
 
   Scaffold(
     modifier = Modifier.fillMaxSize(),

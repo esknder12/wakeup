@@ -47,9 +47,21 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 96.dp)
         ) {
+            // Brand wordmark
+            item {
+                Spacer(modifier = Modifier.height(18.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.nequ_wordmark),
+                    contentDescription = "NEQU",
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .height(28.dp)
+                )
+            }
+
             // Next Alarm Header Pill
             item {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(14.dp))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -113,7 +125,7 @@ fun HomeScreen(
                 }
             }
 
-            // Hero Banner: "No Misses, No Snooze, No Oversleep. Niqu ንቁ Prevails."
+            // Hero Banner: "No Misses, No Snooze, No Oversleep. NEQU Prevails."
             item {
                 Spacer(modifier = Modifier.height(14.dp))
                 Card(
@@ -162,7 +174,7 @@ fun HomeScreen(
                                 )
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
-                                    text = "Niqu ንቁ Prevails with Math & Shake missions.",
+                                    text = "NEQU Prevails with Math & Shake missions.",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = AlarmyTextSecondary
                                 )

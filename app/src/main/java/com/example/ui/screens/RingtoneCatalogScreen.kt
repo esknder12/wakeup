@@ -67,7 +67,7 @@ fun RingtoneCatalogScreen(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "Niqu ንቁ Ringtones Catalog",
+                        text = "NEQU Ringtones Catalog",
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
                             color = Color.White
@@ -87,7 +87,7 @@ fun RingtoneCatalogScreen(
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = "NIQU/EN/RINGTONES",
+                            text = "NEQU/EN/RINGTONES",
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                             color = AlarmyRed,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
