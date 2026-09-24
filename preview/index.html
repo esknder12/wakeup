@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Niqu ንቁ — Volume Lock Preview</title>
+<style>
+  :root{
+    --red:#FF5252;
+    --blue:#42A5F5;
+    --bg:#0D1321;
+    --surface:#162035;
+    --card:#1D2A44;
+    --border:#2E4068;
+    --muted:#90A4AE;
+    --green:#4CAF50;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    margin:0;min-height:100vh;
+    background:radial-gradient(1200px 700px at 12% -10%, #1b2742 0%, #090d17 55%, #06080f 100%);
+    color:#fff;font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    display:flex;justify-content:center;padding:28px 20px 48px;gap:34px;flex-wrap:wrap;align-items:flex-start;
+  }
+  h1,h2,h3,h4{margin:0}
+  .intro{max-width:340px;padding-top:18px}
+  .intro .brand{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .intro .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,var(--red),#c62828);
+    display:grid;place-items:center;font-size:20px;box-shadow:0 8px 20px rgba(255,82,82,.35)}
+  .intro h1{font-size:23px;letter-spacing:.3px}
+  .intro p{color:#b0bec5;font-size:13.5px;line-height:1.65}
+  .intro .note{background:rgba(66,165,245,.08);border:1px solid rgba(66,165,245,.3);border-radius:14px;
+    padding:12px 14px;font-size:12.5px;color:#bbdefb;line-height:1.6;margin-top:16px}
+  .steps{list-style:none;padding:0;margin:18px 0 0;font-size:13px;color:#cfd8dc}
+  .steps li{display:flex;gap:10px;padding:7px 0;line-height:1.5}
+  .steps .n{flex:none;width:21px;height:21px;border-radius:50%;background:var(--card);border:1px solid var(--border);
+    display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--red)}
+
+  /* ── phone ─────────────────────────────────────────────── */
+  .stage{position:relative;padding:0 22px}
+  .phone{
+    position:relative;width:372px;height:788px;border-radius:52px;background:#05070d;
+    border:11px solid #11151f;box-shadow:0 40px 90px rgba(0,0,0,.65), 0 0 0 2px #222a38;
+    overflow:hidden;
+  }
+  .screen{position:absolute;inset:0;background:var(--bg);overflow:hidden;display:flex;flex-direction:column}
+  .statusbar{height:34px;flex:none;display:flex;align-items:center;justify-content:space-between;
+    padding:0 22px;font-size:12px;color:#cfd8dc;font-weight:600}
+  .content{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+  .content::-webkit-scrollbar{display:none}
+
+  /* hardware buttons */
+  .hw{position:absolute;background:linear-gradient(90deg,#1b2130,#2b3446);border-radius:4px;cursor:pointer;
+    transition:transform .07s ease, background .15s ease;border:none;padding:0}
+  .hw:active{transform:scale(.96);background:#3a465c}
+  .hw.left{left:-4px;width:6px}
+  .hw.right{right:-4px;width:6px}
+  .hw-vu{top:168px;height:62px}
+  .hw-vd{top:242px;height:62px}
+  .hw-pw{top:196px;height:78px}
+  .hwlabel{position:absolute;font-size:10px;font-weight:700;letter-spacing:.6px;color:#546e7a;white-space:nowrap}
+  .hwlabel.l{left:-92px;text-align:right;width:78px}
+  .hwlabel.r{right:-88px;width:74px}
+  .hwlabel b{color:#b0bec5;display:block;font-size:10.5px}
+  .hwlabel.hit b{color:var(--red)}
+
+  /* ── home screen ───────────────────────────────────────── */
+  .pill{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);
+    border-radius:20px;padding:7px 14px;font-size:12.5px;font-weight:600}
+  .pill.red{background:rgba(255,82,82,.15);border-color:rgba(255,82,82,.4);color:var(--red)}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .px{padding-left:16px;padding-right:16px}
+  .hero{margin:14px 16px 0;background:var(--surface);border-radius:22px;padding:16px;display:flex;gap:12px;align-items:center}
+  .hero img{width:76px;height:76px;border-radius:14px;object-fit:cover;flex:none}
+  .tag{background:var(--red);border-radius:6px;padding:2px 6px;font-size:9.5px;font-weight:800;letter-spacing:.4px}
+  .hero h3{font-size:17px;font-weight:800;line-height:1.25;margin-top:8px}
+  .hero p{margin:6px 0 0;font-size:11.5px;color:var(--muted)}
+  .sectionhead{margin:20px 16px 10px;font-size:11.5px;font-weight:800;letter-spacing:1.1px;color:var(--muted)}
+  .alarm{margin:0 16px 12px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:15px 16px;cursor:pointer;transition:border-color .15s}
+  .alarm:hover{border-color:var(--red)}
+  .alarm .time{font-size:31px;font-weight:800;letter-spacing:-.5px;line-height:1}
+  .alarm .time small{font-size:14px;font-weight:700;color:var(--muted);margin-left:5px}
+  .alarm .label{font-size:13px;font-weight:600;margin-top:5px}
+  .alarm .sub{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .chip{font-size:10px;font-weight:700;letter-spacing:.3px;padding:4px 8px;border-radius:8px;
+    background:rgba(66,165,245,.14);color:var(--blue);display:inline-flex;align-items:center;gap:4px}
+  .chip.lock{background:rgba(255,82,82,.14);color:var(--red)}
+  .chip.off{background:#22304d;color:#78909c}
+  .switch{position:relative;width:46px;height:26px;border-radius:14px;background:#33415c;flex:none;
+    cursor:pointer;transition:background .18s}
+  .switch.on{background:var(--red)}
+  .switch i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .18s}
+  .switch.on i{left:23px}
+  .btn{border:none;border-radius:14px;padding:13px 16px;font-size:13.5px;font-weight:800;cursor:pointer;
+    font-family:inherit;transition:filter .15s}
+  .btn:hover{filter:brightness(1.1)}
+  .btn.red{background:var(--red);color:#fff}
+  .btn.ghost{background:var(--surface);color:#fff;border:1px solid var(--border)}
+  .btn.block{display:block;width:100%}
+
+  /* ── ringing screen ────────────────────────────────────── */
+  .ring{padding:22px 16px 16px;display:flex;flex-direction:column;height:100%;align-items:center;text-align:center}
+  .ringhead{display:flex;align-items:center;gap:9px;animation:pulse .8s ease-in-out infinite alternate}
+  @keyframes pulse{from{transform:scale(.96)}to{transform:scale(1.05)}}
+  .ringhead span{font-size:14.5px;font-weight:900;color:var(--red);letter-spacing:1.4px}
+  .lockbadge{margin-top:11px;display:inline-flex;align-items:center;gap:6px;background:rgba(255,82,82,.15);
+    border:1px solid rgba(255,82,82,.45);border-radius:20px;padding:6px 12px;font-size:10.5px;font-weight:800;
+    letter-spacing:.8px;color:var(--red)}
+  .lockbadge.shake{animation:shake .4s}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}
+    60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+  .missioncard{margin-top:18px;width:100%;flex:1;background:var(--surface);border:2px solid rgba(255,82,82,.4);
+    border-radius:24px;padding:18px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+  .problem{font-size:43px;font-weight:900;letter-spacing:-1px}
+  .answer{margin-top:14px;width:170px;height:54px;border-radius:14px;background:var(--card);
+    border:2px solid var(--border);display:grid;place-items:center;font-size:26px;font-weight:800;letter-spacing:3px}
+  .answer.err{border-color:var(--red);animation:shake .4s}
+  .keypad{margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:100%;max-width:240px}
+  .key{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 0;font-size:19px;
+    font-weight:800;color:#fff;cursor:pointer;font-family:inherit;transition:background .12s}
+  .key:hover{background:#25355a}
+  .progressdots{display:flex;gap:7px;margin-top:16px}
+  .dot{width:9px;height:9px;border-radius:50%;background:#33415c}
+  .dot.done{background:var(--green)}
+
+  /* volume HUD inside phone */
+  .hud{position:absolute;left:50%;transform:translateX(-50%);top:54px;width:250px;background:rgba(5,8,15,.94);
+    border:1px solid var(--border);border-radius:18px;padding:12px 14px;opacity:0;pointer-events:none;
+    transition:opacity .2s;backdrop-filter:blur(6px);z-index:30}
+  .hud.show{opacity:1}
+  .hud.blocked{border-color:var(--red);animation:shake .4s}
+  .hud .hudtop{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700;color:var(--muted)}
+  .hud .bar{margin-top:9px;height:9px;border-radius:5px;background:#22304d;overflow:hidden}
+  .hud .fill{height:100%;background:var(--red);transition:width .18s}
+  .hud .msg{margin-top:9px;font-size:10.5px;font-weight:800;letter-spacing:.4px;color:var(--red)}
+  .hud .msg.ok{color:var(--muted)}
+
+  /* overlay states */
+  .overlay{position:absolute;inset:0;background:rgba(5,8,15,.96);display:none;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;padding:30px;z-index:40}
+  .overlay.show{display:flex}
+  .overlay h2{font-size:22px;font-weight:900;margin-bottom:10px}
+  .overlay p{font-size:13px;color:var(--muted);line-height:1.6;max-width:260px}
+  .bigicon{font-size:54px;margin-bottom:14px}
+
+  /* modal editor */
+  .modal{position:absolute;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;
+    padding:16px;z-index:35}
+  .modal.show{display:flex}
+  .sheet{width:100%;max-height:92%;overflow-y:auto;background:var(--surface);border:1px solid var(--border);
+    border-radius:26px;padding:18px;scrollbar-width:none}
+  .sheet::-webkit-scrollbar{display:none}
+  .sheet h3{font-size:17px;font-weight:800;margin-bottom:14px}
+  .fieldcard{background:var(--card);border-radius:18px;padding:14px;margin-bottom:11px}
+  .fieldcard .k{font-size:10.5px;font-weight:800;letter-spacing:.7px;color:var(--muted)}
+  .fieldcard .v{font-size:14px;font-weight:700;margin-top:6px}
+  .newflag{background:var(--green);color:#04150a;border-radius:6px;padding:2px 6px;font-size:9px;font-weight:900;
+    letter-spacing:.5px;margin-left:7px;vertical-align:middle}
+
+  /* ── side log panel ────────────────────────────────────── */
+  .panel{width:352px;padding-top:6px}
+  .panel h4{font-size:12px;letter-spacing:1px;color:var(--muted);margin-bottom:10px;font-weight:800}
+  .toggles{background:#101725;border:1px solid #223049;border-radius:18px;padding:14px;margin-bottom:16px}
+  .toggles .row{padding:8px 0}
+  .toggles .t{font-size:13px;font-weight:700}
+  .toggles .d{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.45;max-width:215px}
+  .attack{width:100%;margin-top:10px;background:#1a2438;border:1px solid #2b3a58;color:#cfd8dc;
+    border-radius:12px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+  .attack:hover{border-color:var(--red);color:#fff}
+  .log{background:#080c15;border:1px solid #1e2a42;border-radius:18px;padding:14px;height:376px;overflow-y:auto;
+    font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:11px;line-height:1.65}
+  .log div{margin-bottom:5px;word-break:break-word;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+  .log .t{color:#455a64}
+  .log .block{color:var(--red);font-weight:700}
+  .log .keep{color:var(--green)}
+  .log .info{color:#78909c}
+  .log .warn{color:#FFB300}
+  .sndbtn{position:absolute;top:-2px;right:24px;background:#141c2c;border:1px solid #2b3a58;color:#cfd8dc;
+    border-radius:10px;padding:7px 11px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit}
+  @media (max-width:1180px){body{flex-direction:column;align-items:center}
+    .intro,.panel{max-width:390px;width:100%}.hwlabel{display:none}}
+</style>
+</head>
+<body>
+
+<!-- ───────────── left: explainer ───────────── -->
+<div class="intro">
+  <div class="brand">
+    <div class="logo">⏰</div>
+    <div>
+      <h1>Niqu ንቁ</h1>
+      <div style="font-size:11.5px;color:#78909c;font-weight:600">Volume lock preview</div>
+    </div>
+  </div>
+  <p>This is a browser simulation of the screens in your repo, wired to the same logic as the Kotlin code.
+     Press the phone's <b style="color:#fff">Volume Down</b> button while the alarm rings and watch what happens.</p>
+  <ol class="steps">
+    <li><span class="n">1</span><span>Tap <b>TEST MISSION</b> on any alarm to make it ring.</span></li>
+    <li><span class="n">2</span><span>Hammer <b>Volume Down</b> — with the lock on, nothing happens.</span></li>
+    <li><span class="n">3</span><span>Try the shade slider attack in the panel on the right.</span></li>
+    <li><span class="n">4</span><span>Turn the lock <b>off</b> and ring again to see the old bug.</span></li>
+    <li><span class="n">5</span><span>Solve 3 sums to actually stop it.</span></li>
+  </ol>
+  <div class="note">Your keyboard works too: <b>↑ / ↓</b> are the volume keys, <b>Esc</b> is Back.
+    An Android emulator can't run in this sandbox, so this preview mirrors the real screens rather than running the APK.</div>
+</div>
+
+<!-- ───────────── middle: phone ───────────── -->
+<div class="stage">
+  <button class="sndbtn" id="sndBtn">🔊 Siren on</button>
+
+  <div class="hwlabel l hw-vu" id="lblVU" style="top:188px">VOLUME UP<b>press me</b></div>
+  <div class="hwlabel l hw-vd" id="lblVD" style="top:262px">VOLUME DOWN<b>press me</b></div>
+  <div class="hwlabel r" id="lblPW" style="top:216px">POWER<b>can't be blocked</b></div>
+
+  <div class="phone">
+    <button class="hw left hw-vu" id="btnVU" aria-label="Volume up"></button>
+    <button class="hw left hw-vd" id="btnVD" aria-label="Volume down"></button>
+    <button class="hw right hw-pw" id="btnPW" aria-label="Power"></button>
+
+    <div class="screen">
+      <div class="statusbar">
+        <span id="clock">5:29</span>
+        <span>◉ 📶 🔋</span>
+      </div>
+
+      <!-- HOME -->
+      <div class="content" id="homeScreen">
+        <div class="px" style="margin-top:12px">
+          <div class="row">
+            <span class="pill">🕐 <span id="nextAlarm">Alarm in 1m</span></span>
+            <span class="pill red">🎓 PW / Allen Routine</span>
+          </div>
+        </div>
+
+        <div class="hero">
+          <div style="flex:1">
+            <span class="tag">NO SNOOZE</span>
+            <span style="font-size:10px;color:var(--muted);margin-left:6px">India's #1 Study Clock</span>
+            <h3>No Misses. No Snooze.<br>No Oversleep.</h3>
+            <p>Niqu ንቁ Prevails with Math &amp; Shake missions.</p>
+          </div>
+          <img src="/app/src/main/res/drawable/morning_study_hero_1785481407502.jpg" alt="" />
+        </div>
+
+        <div class="sectionhead">YOUR ALARMS</div>
+        <div id="alarmList"></div>
+        <div style="height:24px"></div>
+      </div>
+
+      <!-- RINGING -->
+      <div class="content" id="ringScreen" style="display:none">
+        <div class="ring">
+          <div class="ringhead">⏰ <span>ALARM RINGING • NO SNOOZE</span></div>
+          <div class="lockbadge" id="lockBadge">🔒 VOLUME KEYS LOCKED</div>
+          <div style="margin-top:9px;font-size:17px;font-weight:800" id="ringLabel">Morning Study Revision</div>
+          <div style="font-size:11.5px;color:var(--blue);margin-top:3px" id="ringTone">Ringtone: End of the World</div>
+
+          <div class="missioncard">
+            <div style="font-size:10.5px;font-weight:800;letter-spacing:.9px;color:var(--muted)">SOLVE TO DISMISS</div>
+            <div class="problem" id="problem">73 + 18</div>
+            <div class="answer" id="answer">&nbsp;</div>
+            <div class="progressdots" id="dots"></div>
+            <div class="keypad" id="keypad"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- volume HUD -->
+      <div class="hud" id="hud">
+        <div class="hudtop"><span>ALARM VOLUME</span><span id="hudPct">100%</span></div>
+        <div class="bar"><div class="fill" id="hudFill" style="width:100%"></div></div>
+        <div class="msg" id="hudMsg">🔒 LOCKED — FINISH THE MISSION</div>
+      </div>
+
+      <!-- overlays -->
+      <div class="overlay" id="wakeOverlay">
+        <div class="bigicon">👁️</div>
+        <h2>Wake Up Check</h2>
+        <p>Prove you're really awake. This fires again in 5 minutes if you don't confirm.</p>
+        <div style="font-size:40px;font-weight:900;margin:18px 0;color:var(--red)" id="wakeCount">98</div>
+        <button class="btn red" id="awakeBtn">I'M AWAKE</button>
+      </div>
+
+      <div class="overlay" id="doneOverlay">
+        <div class="bigicon">☀️</div>
+        <h2>Mission complete</h2>
+        <p>Alarm dismissed and your original volume has been restored — exactly what
+           <b style="color:#fff">AlarmVolumeLock.release()</b> does.</p>
+        <button class="btn ghost" style="margin-top:20px" id="backHome">Back to alarms</button>
+      </div>
+
+      <div class="overlay" id="sleptOverlay">
+        <div class="bigicon">😴</div>
+        <h2>Alarm silenced</h2>
+        <p>Volume Down took the alarm to zero and you went back to sleep. <b style="color:var(--red)">This is the bug
+           you reported</b> — turn the Volume Button Lock back on and ring again.</p>
+        <button class="btn red" style="margin-top:20px" id="sleptBtn">Try again with the lock</button>
+      </div>
+
+      <div class="overlay" id="screenOff" style="background:#000">
+        <p style="font-size:12px">Screen off — the alarm is still ringing.<br>Press Power again.</p>
+      </div>
+
+      <!-- editor -->
+      <div class="modal" id="editor">
+        <div class="sheet">
+          <h3>Edit Alarm</h3>
+          <div class="fieldcard"><div class="k">TIME</div><div class="v" id="edTime">05:30 AM</div></div>
+          <div class="fieldcard"><div class="k">MISSION</div><div class="v">🧮 Math Problems · 3 · Medium</div></div>
+          <div class="fieldcard"><div class="k">RINGTONE</div><div class="v">End of the World</div></div>
+          <div class="fieldcard">
+            <div class="row">
+              <div><div class="v" style="margin:0">Wake Up Check</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:3px">Confirms you're awake 5 mins after alarm</div></div>
+              <div class="switch on" id="swWake"><i></i></div>
+            </div>
+          </div>
+          <div class="fieldcard" style="border:1px solid rgba(255,82,82,.45)">
+            <div class="row">
+              <div><div class="v" style="margin:0">🔒 Volume Button Lock<span class="newflag">NEW</span></div>
+                <div style="font-size:11px;color:var(--muted);margin-top:3px;max-width:190px">Volume keys do nothing while ringing — only the mission stops it</div></div>
+              <div class="switch on" id="swLock"><i></i></div>
+            </div>
+          </div>
+          <div class="row" style="gap:10px;margin-top:14px">
+            <button class="btn ghost" style="flex:1" id="edCancel">Close</button>
+            <button class="btn red" style="flex:1" id="edSave">Save Mission</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /screen -->
+  </div><!-- /phone -->
+</div>
+
+<!-- ───────────── right: controls + log ───────────── -->
+<div class="panel">
+  <h4>SIMULATION CONTROLS</h4>
+  <div class="toggles">
+    <div class="row">
+      <div><div class="t">🔒 Volume Button Lock</div>
+        <div class="d">isVolumeButtonLockEnabled on the Room entity</div></div>
+      <div class="switch on" id="swLock2"><i></i></div>
+    </div>
+    <div class="row">
+      <div><div class="t">🚪 Escape Block</div>
+        <div class="d">Back / recents can't dodge the mission</div></div>
+      <div class="switch on" id="swEsc"><i></i></div>
+    </div>
+    <button class="attack" id="shadeAttack">🎚️ Attack: drag the shade slider to 0%</button>
+    <button class="attack" id="muteAttack">🔇 Attack: mute the alarm stream</button>
+  </div>
+
+  <h4>WHAT THE CODE DOES <span style="color:#37474f">— live</span></h4>
+  <div class="log" id="log"></div>
+</div>
+
+<script>
+/* ────────────────────────────────────────────────────────────
+   State mirroring the Kotlin implementation
+   ──────────────────────────────────────────────────────────── */
+const MAX_STREAM = 15;              // AudioManager.getStreamMaxVolume(STREAM_ALARM)
+const MIN_PERCENT = 0.5;            // AlarmVolumeLock.MIN_PERCENT
+const WATCHDOG_MS = 250;            // AlarmVolumeLock.WATCHDOG_INTERVAL_MS
+
+const state = {
+  ringing:false,
+  lockEnabled:true,
+  escapeBlock:true,
+  soundOn:true,
+  userVolume:9,                     // volume before the alarm (restored on release)
+  streamVolume:9,                   // current STREAM_ALARM level
+  lockedVolume:15,                  // level the lock holds
+  solved:0,
+  target:3,
+  a:73,b:18,
+  input:"",
+  screenOff:false,
+};
+
+const alarms = [
+  {id:1,h:5,m:30,label:"Morning Study Revision (PW / Allen)",days:"Weekdays",mission:"🧮 Math · 3",tone:"End of the World",on:true},
+  {id:2,h:6,m:15,label:"JEE / NEET Daily Practice",days:"Weekdays",mission:"📳 Shake · 20",tone:"Cock a doodle doo",on:true},
+  {id:3,h:7,m:0,label:"Topper Morning Routine",days:"Weekends",mission:"🔲 Memory · 2",tone:"[Motivation] Don't give up",on:false},
+];
+let current = alarms[0];
+
+/* ── logging ─────────────────────────────────────────────── */
+const logEl = document.getElementById('log');
+function log(msg, cls='info'){
+  const t = new Date().toLocaleTimeString('en-GB',{hour12:false});
+  const d = document.createElement('div');
+  d.innerHTML = `<span class="t">${t}</span> <span class="${cls}">${msg}</span>`;
+  logEl.prepend(d);
+  while(logEl.children.length > 90) logEl.lastChild.remove();
+}
+log('Preview ready — tap TEST MISSION on an alarm.','info');
+
+/* ── web audio siren (gentle) ─────────────────────────────── */
+let actx=null, osc=null, gain=null, lfoTimer=null;
+function startSiren(){
+  if(!state.soundOn) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended') actx.resume();
+    stopSiren(true);
+    osc = actx.createOscillator();
+    gain = actx.createGain();
+    osc.type='sawtooth';
+    osc.frequency.value=800;
+    gain.gain.value=streamGain();
+    osc.connect(gain).connect(actx.destination);
+    osc.start();
+    let up=true;
+    lfoTimer=setInterval(()=>{
+      if(!osc) return;
+      osc.frequency.linearRampToValueAtTime(up?1500:800, actx.currentTime+.38);
+      up=!up;
+    },380);
+  }catch(e){ /* audio not available */ }
+}
+function stopSiren(keepCtx){
+  if(lfoTimer){clearInterval(lfoTimer);lfoTimer=null;}
+  if(osc){try{osc.stop();osc.disconnect();}catch(e){} osc=null;}
+  if(gain){try{gain.disconnect();}catch(e){} gain=null;}
+  if(!keepCtx && actx && actx.state==='running'){ /* keep context for reuse */ }
+}
+function streamGain(){
+  // deliberately quiet: 0.045 max so the demo never blasts anyone
+  return (state.streamVolume / MAX_STREAM) * 0.045;
+}
+function applyGain(){ if(gain && actx) gain.gain.setTargetAtTime(streamGain(), actx.currentTime, .05); }
+
+/* ── the lock itself ─────────────────────────────────────── */
+function engageLock(volumePercent){
+  const floor = Math.max(1, Math.round(MAX_STREAM*MIN_PERCENT));
+  state.lockedVolume = Math.min(MAX_STREAM, Math.max(floor, Math.round(MAX_STREAM*volumePercent)));
+  state.userVolume = state.streamVolume;
+  state.streamVolume = state.lockedVolume;
+  log(`AlarmVolumeLock.engage() → stream pinned at ${state.lockedVolume}/${MAX_STREAM} (was ${state.userVolume})`,'keep');
+  log('ContentObserver + VOLUME_CHANGED receiver + 250ms watchdog registered','info');
+  log('requestAudioFocus(AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE)','info');
+  applyGain();
+}
+function releaseLock(){
+  log(`AlarmVolumeLock.release() → volume restored to ${state.userVolume}/${MAX_STREAM}`,'keep');
+  state.streamVolume = state.userVolume;
+  applyGain();
+}
+/** The watchdog: anything that changes the stream gets undone. */
+function enforceNow(source){
+  if(!state.ringing || !state.lockEnabled) return false;
+  if(state.streamVolume !== state.lockedVolume){
+    setTimeout(()=>{
+      state.streamVolume = state.lockedVolume;
+      applyGain(); paintHud(true, `↩︎ ${source} UNDONE — VOLUME RESTORED`);
+      log(`watchdog (${WATCHDOG_MS}ms) → setStreamVolume(ALARM, ${state.lockedVolume}) after ${source}`,'keep');
+    }, WATCHDOG_MS);
+    return true;
+  }
+  return false;
+}
+
+/* ── hardware key handling = Activity.dispatchKeyEvent ───── */
+const BLOCKED = ['VOLUME_DOWN','VOLUME_UP','VOLUME_MUTE','BACK','APP_SWITCH','MEDIA_PLAY_PAUSE'];
+function dispatchKeyEvent(code){
+  if(state.ringing && state.lockEnabled && BLOCKED.includes(code)){
+    log(`dispatchKeyEvent(KEYCODE_${code}) → swallowed ✋`,'block');
+    paintHud(true, '🔒 VOLUME KEYS LOCKED — SOLVE THE MISSION');
+    document.getElementById('lockBadge').classList.add('shake');
+    setTimeout(()=>document.getElementById('lockBadge').classList.remove('shake'),400);
+    return true;
+  }
+  return false;
+}
+
+/* ── HUD ─────────────────────────────────────────────────── */
+let hudTimer=null;
+function paintHud(blocked, msg){
+  const hud=document.getElementById('hud');
+  const pct=Math.round(state.streamVolume/MAX_STREAM*100);
+  document.getElementById('hudPct').textContent = pct+'%';
+  document.getElementById('hudFill').style.width = pct+'%';
+  const m=document.getElementById('hudMsg');
+  m.textContent = msg;
+  m.className = 'msg' + (blocked?'':' ok');
+  hud.classList.toggle('blocked', !!blocked);
+  hud.classList.add('show');
+  clearTimeout(hudTimer);
+  hudTimer=setTimeout(()=>hud.classList.remove('show'), 1700);
+}
+
+/* ── volume key presses ──────────────────────────────────── */
+function volumeKey(dir){
+  const code = dir<0 ? 'VOLUME_DOWN' : 'VOLUME_UP';
+  if(dispatchKeyEvent(code)) return;                 // swallowed, nothing happens
+
+  state.streamVolume = Math.max(0, Math.min(MAX_STREAM, state.streamVolume+dir));
+  applyGain();
+  const pct=Math.round(state.streamVolume/MAX_STREAM*100);
+  paintHud(false, state.ringing? `UNLOCKED — ALARM NOW AT ${pct}%` : `VOLUME ${pct}%`);
+  if(state.ringing){
+    log(`KEYCODE_${code} → stream lowered to ${state.streamVolume}/${MAX_STREAM}`, dir<0?'warn':'info');
+    if(state.streamVolume===0){
+      log('alarm silenced by the user — they went back to sleep 😴','block');
+      stopSiren(); state.ringing=false;
+      document.getElementById('sleptOverlay').classList.add('show');
+    }
+  }
+}
+
+/* ── ringing flow ────────────────────────────────────────── */
+function ringAlarm(alarm){
+  current = alarm;
+  state.ringing=true; state.solved=0; state.input='';
+  state.lockEnabled = document.getElementById('swLock2').classList.contains('on');
+  state.escapeBlock = document.getElementById('swEsc').classList.contains('on');
+  document.getElementById('ringLabel').textContent = alarm.label;
+  document.getElementById('ringTone').textContent = 'Ringtone: '+alarm.tone;
+  document.getElementById('lockBadge').style.display = state.lockEnabled?'inline-flex':'none';
+  document.getElementById('homeScreen').style.display='none';
+  document.getElementById('ringScreen').style.display='block';
+  document.getElementById('clock').textContent = `${alarm.h}:${String(alarm.m).padStart(2,'0')}`;
+  log(`AlarmRingActivity.start(alarmId=${alarm.id}) — showWhenLocked + turnScreenOn`,'info');
+  if(state.lockEnabled) engageLock(1.0);
+  else log('isVolumeButtonLockEnabled = false → stream left unguarded','warn');
+  newProblem(); paintDots();
+  startSiren();
+}
+
+function newProblem(){
+  state.a = 10+Math.floor(Math.random()*89);
+  state.b = 10+Math.floor(Math.random()*89);
+  state.input='';
+  document.getElementById('problem').textContent = `${state.a} + ${state.b}`;
+  document.getElementById('answer').innerHTML='&nbsp;';
+}
+function paintDots(){
+  const d=document.getElementById('dots'); d.innerHTML='';
+  for(let i=0;i<state.target;i++){
+    const s=document.createElement('div');
+    s.className='dot'+(i<state.solved?' done':'');
+    d.appendChild(s);
+  }
+}
+function press(k){
+  const ans=document.getElementById('answer');
+  if(k==='⌫'){ state.input=state.input.slice(0,-1); }
+  else if(k==='✓'){
+    if(parseInt(state.input,10)===state.a+state.b){
+      state.solved++; paintDots();
+      log(`mission ${state.solved}/${state.target} solved ✓`,'keep');
+      if(state.solved>=state.target){ missionComplete(); return; }
+      newProblem(); return;
+    } else {
+      ans.classList.add('err'); setTimeout(()=>ans.classList.remove('err'),400);
+      log('wrong answer — alarm keeps ringing','warn');
+      state.input='';
+    }
+  }
+  else if(state.input.length<4){ state.input+=k; }
+  ans.innerHTML = state.input || '&nbsp;';
+}
+function missionComplete(){
+  log('mission complete → onDismiss()','keep');
+  stopSiren();
+  document.getElementById('wakeOverlay').classList.add('show');
+  let n=98;
+  const c=document.getElementById('wakeCount');
+  c.textContent=n;
+  const iv=setInterval(()=>{ n--; c.textContent=n; if(n<=0||!document.getElementById('wakeOverlay').classList.contains('show')) clearInterval(iv); },1000);
+}
+function dismissAll(){
+  state.ringing=false;
+  if(state.lockEnabled) releaseLock();
+  stopSiren();
+  document.getElementById('wakeOverlay').classList.remove('show');
+  document.getElementById('doneOverlay').classList.add('show');
+}
+function goHome(){
+  document.getElementById('doneOverlay').classList.remove('show');
+  document.getElementById('sleptOverlay').classList.remove('show');
+  document.getElementById('ringScreen').style.display='none';
+  document.getElementById('homeScreen').style.display='block';
+  document.getElementById('clock').textContent='5:29';
+  state.streamVolume = state.userVolume; applyGain();
+}
+
+/* ── home list ───────────────────────────────────────────── */
+function paintAlarms(){
+  const wrap=document.getElementById('alarmList'); wrap.innerHTML='';
+  alarms.forEach(a=>{
+    const h12 = a.h>12? a.h-12 : a.h;
+    const ampm = a.h<12?'AM':'PM';
+    const el=document.createElement('div');
+    el.className='alarm';
+    el.innerHTML=`
+      <div class="row">
+        <div>
+          <div class="time">${String(h12).padStart(2,'0')}:${String(a.m).padStart(2,'0')}<small>${ampm}</small></div>
+          <div class="label">${a.label}</div>
+          <div class="sub">${a.days} · ${a.mission}</div>
+          <div class="chips">
+            <span class="chip">🎵 ${a.tone}</span>
+            <span class="chip ${state.lockEnabled?'lock':'off'}">${state.lockEnabled?'🔒 Volume lock':'🔓 Lock off'}</span>
+          </div>
+        </div>
+        <div class="switch ${a.on?'on':''}"><i></i></div>
+      </div>
+      <button class="btn red block" style="margin-top:13px;padding:11px">TEST MISSION ▶</button>`;
+    el.querySelector('.switch').onclick=(e)=>{e.stopPropagation();a.on=!a.on;paintAlarms();
+      log(`updateAlarmEnabled(id=${a.id}, ${a.on})`,'info');};
+    el.querySelector('button').onclick=(e)=>{e.stopPropagation();ringAlarm(a);};
+    el.onclick=()=>{ current=a;
+      document.getElementById('edTime').textContent=`${String(h12).padStart(2,'0')}:${String(a.m).padStart(2,'0')} ${ampm}`;
+      document.getElementById('editor').classList.add('show'); };
+    wrap.appendChild(el);
+  });
+}
+
+/* ── wiring ──────────────────────────────────────────────── */
+document.getElementById('btnVU').onclick=()=>{flash('lblVU');volumeKey(+1);};
+document.getElementById('btnVD').onclick=()=>{flash('lblVD');volumeKey(-1);};
+document.getElementById('btnPW').onclick=()=>{
+  flash('lblPW');
+  log('KEYCODE_POWER → never delivered to apps; screen off, alarm keeps ringing','warn');
+  state.screenOff=!state.screenOff;
+  document.getElementById('screenOff').classList.toggle('show', state.screenOff);
+};
+function flash(id){const e=document.getElementById(id);e.classList.add('hit');setTimeout(()=>e.classList.remove('hit'),260);}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowDown'){e.preventDefault();document.getElementById('btnVD').click();}
+  if(e.key==='ArrowUp'){e.preventDefault();document.getElementById('btnVU').click();}
+  if(e.key==='Escape'){
+    if(state.ringing && state.escapeBlock){ dispatchKeyEvent('BACK'); log('BackHandler(enabled = true) → back press ignored','block'); }
+  }
+});
+
+const keypad=document.getElementById('keypad');
+['1','2','3','4','5','6','7','8','9','⌫','0','✓'].forEach(k=>{
+  const b=document.createElement('button');
+  b.className='key'; b.textContent=k; b.onclick=()=>press(k);
+  keypad.appendChild(b);
+});
+
+document.getElementById('awakeBtn').onclick=dismissAll;
+document.getElementById('backHome').onclick=goHome;
+document.getElementById('sleptBtn').onclick=()=>{
+  setSwitch('swLock2',true); setSwitch('swLock',true); state.lockEnabled=true; paintAlarms(); goHome();
+};
+
+function setSwitch(id,on){document.getElementById(id).classList.toggle('on',on);}
+function bindSwitch(id,fn){
+  const el=document.getElementById(id);
+  el.onclick=()=>{el.classList.toggle('on');fn(el.classList.contains('on'));};
+}
+bindSwitch('swLock2',v=>{
+  state.lockEnabled=v; setSwitch('swLock',v); paintAlarms();
+  log(`updateVolumeButtonLock(id=${current.id}, ${v}) → Room UPDATE`,'info');
+  if(state.ringing){ v?engageLock(1.0):log('lock dropped mid-alarm (demo only)','warn'); }
+});
+bindSwitch('swLock',v=>{ setSwitch('swLock2',v); state.lockEnabled=v; paintAlarms();
+  log(`isVolumeButtonLockEnabled = ${v}`,'info'); });
+bindSwitch('swEsc',v=>{ state.escapeBlock=v; log(`isEscapeBlockEnabled = ${v}`,'info'); });
+bindSwitch('swWake',v=>log(`isWakeUpCheckEnabled = ${v}`,'info'));
+
+document.getElementById('shadeAttack').onclick=()=>{
+  if(!state.ringing){ log('nothing is ringing — start an alarm first','warn'); return; }
+  log('user dragged the notification-shade slider to 0','warn');
+  state.streamVolume=0; applyGain(); paintHud(state.lockEnabled,'🎚️ SHADE SLIDER → 0%');
+  if(!enforceNow('shade slider')){
+    log('no lock → alarm is now silent 😴','block');
+    stopSiren(); state.ringing=false;
+    document.getElementById('sleptOverlay').classList.add('show');
+  } else {
+    log('ContentObserver(Settings.System) fired','info');
+  }
+};
+document.getElementById('muteAttack').onclick=()=>{
+  if(!state.ringing){ log('nothing is ringing — start an alarm first','warn'); return; }
+  log('AudioManager.adjustStreamVolume(ADJUST_MUTE) from an assistant','warn');
+  state.streamVolume=0; applyGain(); paintHud(state.lockEnabled,'🔇 STREAM MUTED');
+  if(!enforceNow('mute')){
+    stopSiren(); state.ringing=false;
+    document.getElementById('sleptOverlay').classList.add('show');
+  } else { log('isStreamMute() → adjustStreamVolume(ADJUST_UNMUTE)','info'); }
+};
+
+document.getElementById('edCancel').onclick=()=>document.getElementById('editor').classList.remove('show');
+document.getElementById('edSave').onclick=()=>{
+  document.getElementById('editor').classList.remove('show');
+  log(`saveAlarm(id=${current.id}) → Room UPDATE (volume lock ${state.lockEnabled?'ON':'OFF'})`,'keep');
+};
+document.getElementById('sndBtn').onclick=(e)=>{
+  state.soundOn=!state.soundOn;
+  e.target.textContent = state.soundOn?'🔊 Siren on':'🔇 Siren off';
+  if(!state.soundOn) stopSiren(); else if(state.ringing) startSiren();
+};
+
+paintAlarms();
+</script>
+</body>
+</html>
